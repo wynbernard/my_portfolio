@@ -504,10 +504,32 @@ export default function App() {
               {/* Cord */}
               {!isFixed ? (
                 <div style={{
-                  width: 2, height: 48,
-                  background: "linear-gradient(to bottom, #475569, #60a5fa)",
-                  borderRadius: 1, flexShrink: 0,
-                }} />
+                  width: 18, height: 50,
+                  background: "#0f172a",
+                  borderLeft: "2px solid #3b82f6",
+                  borderRight: "2px solid #3b82f6",
+                  boxShadow: "inset 0 0 8px rgba(0,0,0,0.8)",
+                  flexShrink: 0,
+                  display: "flex", flexDirection: "column",
+                  alignItems: "center", justifyContent: "flex-end",
+                  position: "relative",
+                  zIndex: 2
+                }}>
+                  {/* Hardware clip */}
+                  <div style={{ 
+                    width: 14, height: 28, 
+                    background: "linear-gradient(to bottom, #94a3b8, #475569)", 
+                    borderRadius: "3px 3px 8px 8px", 
+                    border: "1px solid #1e293b", 
+                    transform: "translateY(12px)", 
+                    display: "flex", justifyContent: "center",
+                    boxShadow: "0 4px 8px rgba(0,0,0,0.4)",
+                    position: "relative",
+                  }}>
+                    {/* Metal Hook */}
+                    <div style={{ width: 6, height: 12, border: "2px solid #f1f5f9", borderRadius: 10, position: "absolute", bottom: -6 }} />
+                  </div>
+                </div>
               ) : (() => {
                 // Dynamic Cord Calculation
                 const anchorRect = anchorRef.current?.getBoundingClientRect() || { left: 0, top: 0, width: 0 };
@@ -523,17 +545,37 @@ export default function App() {
                 return (
                   <div style={{
                     position: "fixed",
-                    left: ax,
+                    left: ax - 9, // half of 18px width
                     top: ay,
-                    width: 2,
-                    height: dist,
-                    background: "linear-gradient(to bottom, #475569, #60a5fa)",
+                    width: 18,
+                    height: dist - 19, // leave space for the hardware clip below
+                    background: "#0f172a",
+                    borderLeft: "2px solid #3b82f6",
+                    borderRight: "2px solid #3b82f6",
+                    boxShadow: "inset 0 0 8px rgba(0,0,0,0.8)",
                     transformOrigin: "top center",
                     transform: `rotate(${angle}deg)`,
                     zIndex: 9998,
                     pointerEvents: "none",
+                    display: "flex", flexDirection: "column",
+                    alignItems: "center", justifyContent: "flex-end",
                     transition: isDragging ? "none" : "height 0.65s cubic-bezier(0.34,1.56,0.64,1), transform 0.65s cubic-bezier(0.34,1.56,0.64,1)",
-                  }} />
+                  }}>
+                    {/* Hardware clip */}
+                    <div style={{ 
+                      width: 14, height: 28, 
+                      background: "linear-gradient(to bottom, #94a3b8, #475569)", 
+                      borderRadius: "3px 3px 8px 8px", 
+                      border: "1px solid #1e293b", 
+                      transform: "translateY(12px)", 
+                      display: "flex", justifyContent: "center",
+                      boxShadow: "0 4px 8px rgba(0,0,0,0.4)",
+                      position: "relative",
+                    }}>
+                      {/* Metal Hook */}
+                      <div style={{ width: 6, height: 12, border: "2px solid #f1f5f9", borderRadius: 10, position: "absolute", bottom: -6 }} />
+                    </div>
+                  </div>
                 );
               })()}
 
