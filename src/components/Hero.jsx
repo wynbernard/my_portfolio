@@ -1,0 +1,281 @@
+import React, { useState, useEffect, useRef } from "react";
+import profileImg from "../assets/profile.jpg";
+
+const Hero = ({ scrollTo }) => {
+  const [typedFirst, setTypedFirst] = useState("");
+  const [typedLast, setTypedLast] = useState("");
+  const [typingPhase, setTypingPhase] = useState("first");
+
+  const [isDragging, setIsDragging] = useState(false);
+  const [isFixed, setIsFixed] = useState(false);
+  const [cardPos, setCardPos] = useState({ x: 0, y: 0 });
+  const [originPos, setOriginPos] = useState({ x: 0, y: 0 });
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+
+  const cardRef = useRef(null);
+  const anchorRef = useRef(null);
+
+  useEffect(() => {
+    if (!isDragging) return;
+    const onMove = (e) => {
+      setCardPos({ x: e.clientX - dragOffset.x, y: e.clientY - dragOffset.y });
+    };
+    const onUp = () => {
+      setIsDragging(false);
+      setCardPos(originPos);
+      setTimeout(() => setIsFixed(false), 680);
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+  }, [isDragging, dragOffset, originPos]);
+
+  useEffect(() => {
+    const first = "Wynbernard";
+    const last = "Deysolong";
+    let timeout;
+    if (typingPhase === "first") {
+      if (typedFirst.length < first.length) {
+        timeout = setTimeout(() => setTypedFirst(first.slice(0, typedFirst.length + 1)), 90);
+      } else {
+        timeout = setTimeout(() => setTypingPhase("pause"), 400);
+      }
+    } else if (typingPhase === "pause") {
+      if (typedLast.length < last.length) {
+        timeout = setTimeout(() => setTypedLast(last.slice(0, typedLast.length + 1)), 90);
+      } else {
+        timeout = setTimeout(() => setTypingPhase("erase-last"), 1400);
+      }
+    } else if (typingPhase === "erase-last") {
+      if (typedLast.length > 0) {
+        timeout = setTimeout(() => setTypedLast(typedLast.slice(0, -1)), 55);
+      } else {
+        timeout = setTimeout(() => setTypingPhase("erase-first"), 120);
+      }
+    } else if (typingPhase === "erase-first") {
+      if (typedFirst.length > 0) {
+        timeout = setTimeout(() => setTypedFirst(typedFirst.slice(0, -1)), 55);
+      } else {
+        timeout = setTimeout(() => setTypingPhase("first"), 500);
+      }
+    }
+    return () => clearTimeout(timeout);
+  }, [typingPhase, typedFirst, typedLast]);
+
+  return (
+    <section id="home" className="grid-bg" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", paddingTop: 80 }}>
+      {/* Blob container — clips blobs but lets the card overflow freely */}
+      <div style={{ position: "absolute", inset: 0, overflow: "hidden", zIndex: 0, pointerEvents: "none" }}>
+        <div className="blob" style={{ width: 420, height: 420, background: "#1d4ed8", top: "5%", right: "-8%" }} />
+        <div className="blob" style={{ width: 300, height: 300, background: "#6d28d9", bottom: "10%", left: "-5%", animationDelay: "3s" }} />
+      </div>
+
+      <div className="hero-content" style={{ position: "relative", zIndex: 1, maxWidth: 1100, width: "100%", margin: "0 auto", padding: "60px 24px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "48px", justifyContent: "center" }}>
+        {/* LEFT — Hanging ID Card */}
+        <div className="hero-image-col" style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
+          {/* Lanyard + Card wrapper */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", userSelect: "none", position: "relative" }}>
+            {/* Anchor Point — where the cord is tied */}
+            <div ref={anchorRef} style={{ position: "absolute", top: 0, left: "50%", width: 1, height: 1 }} />
+
+            {/* Cord */}
+            {!isFixed ? (
+              <div style={{
+                width: 18, height: 50,
+                background: "#0f172a",
+                borderLeft: "2px solid #3b82f6",
+                borderRight: "2px solid #3b82f6",
+                boxShadow: "inset 0 0 8px rgba(0,0,0,0.8)",
+                flexShrink: 0,
+                display: "flex", flexDirection: "column",
+                alignItems: "center", justifyContent: "flex-end",
+                position: "relative",
+                zIndex: 2
+              }}>
+                {/* Hardware clip */}
+                <div style={{
+                  width: 14, height: 28,
+                  background: "linear-gradient(to bottom, #94a3b8, #475569)",
+                  borderRadius: "3px 3px 8px 8px",
+                  border: "1px solid #1e293b",
+                  transform: "translateY(12px)",
+                  display: "flex", justifyContent: "center",
+                  boxShadow: "0 4px 8px rgba(0,0,0,0.4)",
+                  position: "relative",
+                }}>
+                  {/* Metal Hook */}
+                  <div style={{ width: 6, height: 12, border: "2px solid #f1f5f9", borderRadius: 10, position: "absolute", bottom: -6 }} />
+                </div>
+              </div>
+            ) : (() => {
+              // Dynamic Cord Calculation
+              const anchorRect = anchorRef.current?.getBoundingClientRect() || { left: 0, top: 0, width: 0 };
+              const ax = anchorRect.left + anchorRect.width / 2;
+              const ay = anchorRect.top;
+              const hx = cardPos.x + 120; // card center
+              const hy = cardPos.y + 19;  // hole center
+              const dx = hx - ax;
+              const dy = hy - ay;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              const angle = Math.atan2(dy, dx) * 180 / Math.PI - 90;
+
+              return (
+                <div style={{
+                  position: "fixed",
+                  left: ax - 9, // half of 18px width
+                  top: ay,
+                  width: 18,
+                  height: dist - 19, // leave space for the hardware clip below
+                  background: "#0f172a",
+                  borderLeft: "2px solid #3b82f6",
+                  borderRight: "2px solid #3b82f6",
+                  boxShadow: "inset 0 0 8px rgba(0,0,0,0.8)",
+                  transformOrigin: "top center",
+                  transform: `rotate(${angle}deg)`,
+                  zIndex: 10000,
+                  pointerEvents: "none",
+                  display: "flex", flexDirection: "column",
+                  alignItems: "center", justifyContent: "flex-end",
+                  transition: isDragging ? "none" : "height 0.65s cubic-bezier(0.34,1.56,0.64,1), transform 0.65s cubic-bezier(0.34,1.56,0.64,1)",
+                }}>
+                  {/* Hardware clip */}
+                  <div style={{
+                    width: 14, height: 28,
+                    background: "linear-gradient(to bottom, #94a3b8, #475569)",
+                    borderRadius: "3px 3px 8px 8px",
+                    border: "1px solid #1e293b",
+                    transform: "translateY(12px)",
+                    display: "flex", justifyContent: "center",
+                    boxShadow: "0 4px 8px rgba(0,0,0,0.4)",
+                    position: "relative",
+                  }}>
+                    {/* Metal Hook */}
+                    <div style={{ width: 6, height: 12, border: "2px solid #f1f5f9", borderRadius: 10, position: "absolute", bottom: -6 }} />
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Placeholder keeps layout space when card is fixed */}
+            {isFixed && <div style={{ width: 240, height: 290, flexShrink: 0 }} />}
+
+            {/* ID Card */}
+            <div
+              ref={cardRef}
+              className={isFixed ? "" : "id-card-hang"}
+              onMouseDown={e => {
+                e.preventDefault();
+                const rect = cardRef.current.getBoundingClientRect();
+                setOriginPos({ x: rect.left, y: rect.top });
+                setCardPos({ x: rect.left, y: rect.top });
+                setDragOffset({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+                setIsFixed(true);
+                setIsDragging(true);
+              }}
+              style={{
+                width: 240,
+                borderRadius: 16,
+                border: "1px solid rgba(96,165,250,0.25)",
+                overflow: "hidden",
+                position: isFixed ? "fixed" : "relative",
+                left: isFixed ? cardPos.x : "auto",
+                top: isFixed ? cardPos.y : "auto",
+                background: "linear-gradient(160deg, rgba(15,23,42,0.95), rgba(8,8,15,0.98))",
+                boxShadow: isDragging
+                  ? "0 40px 90px rgba(0,0,0,0.7), 0 0 60px rgba(96,165,250,0.2)"
+                  : "0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(96,165,250,0.1)",
+                cursor: isDragging ? "grabbing" : "grab",
+                transition: isDragging
+                  ? "box-shadow 0.1s"
+                  : "left 0.65s cubic-bezier(0.34,1.56,0.64,1), top 0.65s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s ease",
+                willChange: "left, top",
+                zIndex: isFixed ? 9999 : 1,
+              }}
+            >
+              {/* Clip hole at top */}
+              <div style={{ display: "flex", justifyContent: "center", padding: "12px 0 8px", background: "rgba(96,165,250,0.04)", borderBottom: "1px solid rgba(96,165,250,0.08)" }}>
+                <div style={{ width: 14, height: 14, borderRadius: "50%", border: "2px solid #475569", background: "rgba(8,8,15,0.8)" }} />
+              </div>
+
+              {/* Photo */}
+              <div style={{ padding: "16px 16px 8px", display: "flex", justifyContent: "center" }}>
+                <div style={{ width: 120, height: 140, borderRadius: 10, overflow: "hidden", border: "2px solid rgba(96,165,250,0.2)" }}>
+                  <img
+                    src={profileImg}
+                    alt="Wynbernard Deysolong"
+                    style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center" }}
+                  />
+                </div>
+              </div>
+
+              {/* ID Info */}
+              <div style={{ padding: "8px 16px 16px", textAlign: "center" }}>
+                <p className="syne" style={{ fontSize: 14, fontWeight: 700, color: "#f1f5f9", marginBottom: 2 }}>Wynbernard D.</p>
+                <p className="mono" style={{ fontSize: 9, letterSpacing: "0.12em", color: "#60a5fa", marginBottom: 10 }}>Backend Developer</p>
+                <div style={{ height: 1, background: "rgba(96,165,250,0.1)", marginBottom: 10 }} />
+                <p className="mono" style={{ fontSize: 8, letterSpacing: "0.1em", color: "#475569" }}>Bago City College · 2022–present</p>
+              </div>
+
+              {/* Bottom stripe */}
+              <div style={{ height: 6, background: "linear-gradient(90deg, #3b82f6, #7c3aed, #f472b6)" }} />
+            </div>
+          </div>
+
+          {/* status badge */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8, background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: 99, padding: "6px 16px", transition: "all 0.4s" }}>
+            <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#10b981", display: "inline-block", boxShadow: "0 0 6px #10b981", transition: "all 0.4s" }} />
+            <span className="mono" style={{ fontSize: 10, letterSpacing: "0.12em", color: "#6ee7b7", transition: "color 0.4s" }}>Available for work</span>
+          </div>
+        </div>
+
+        {/* RIGHT — Details */}
+        <div className="fu1" style={{ flex: 1, minWidth: 300, maxWidth: 560 }}>
+          <p className="mono" style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(96,165,250,0.6)", marginBottom: 20 }}>Backend Developer · Philippines</p>
+
+          <h1 className="syne hero-title" style={{ fontWeight: 800, marginBottom: 24, minHeight: "2.2em" }}>
+            <span className="gtext">{typedFirst}</span>
+            <span style={{ color: "var(--text-h)" }}> {typedLast}<span style={{ display: "inline-block", width: 3, height: "0.85em", background: "linear-gradient(135deg,#60a5fa,#a78bfa)", borderRadius: 2, marginLeft: 2, verticalAlign: "middle", animation: "blink 0.75s step-end infinite" }} /></span>
+          </h1>
+
+          <p className="fu2" style={{ color: "#64748b", fontSize: 15, lineHeight: 1.85, marginBottom: 36 }}>
+            A motivated software developer building web-based applications, information systems, and database-driven solutions — blending frontend craft with backend logic.
+          </p>
+
+          {/* <div className="fu3" style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 20 }}>
+            <button className="btn-main" onClick={() => scrollTo("projects")}>View Projects</button>
+            <button className="btn-ghost" onClick={() => scrollTo("contact")}>Get in Touch</button>
+          </div> */}
+
+          <div className="fu3" style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 48 }}>
+            <a href="https://github.com/wynbernard" target="_blank" rel="noreferrer" className="btn-ghost" style={{ padding: "10px 18px", textDecoration: "none", display: "flex", alignItems: "center", gap: 8 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+              GitHub
+            </a>
+            <a href="https://www.linkedin.com/in/wynbernard-deysolong-051017405/" target="_blank" rel="noreferrer" className="btn-ghost" style={{ padding: "10px 18px", textDecoration: "none", display: "flex", alignItems: "center", gap: 8 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+              LinkedIn
+            </a>
+            {/* <a href="https://instagram.com/" target="_blank" rel="noreferrer" className="btn-ghost" style={{ padding: "10px 18px", textDecoration: "none", display: "flex", alignItems: "center", gap: 8 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+              Instagram
+            </a> */}
+          </div>
+
+          <div className="fu3" style={{ display: "flex", gap: 32, flexWrap: "wrap", borderTop: "1px solid var(--nav-border)", paddingTop: 32 }}>
+            {[{ label: "Programmer of the Year", year: "2024" }, { label: "Web Dev of the Year", year: "2025" }].map(a => (
+              <div key={a.label}>
+                <p className="mono" style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 4 }}>{a.label}</p>
+                <p className="syne" style={{ fontSize: 18, fontWeight: 700, color: "var(--container-text)" }}>{a.year}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Hero;
