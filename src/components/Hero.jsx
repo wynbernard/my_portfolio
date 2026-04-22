@@ -123,17 +123,17 @@ const Hero = ({ scrollTo }) => {
               const anchorRect = anchorRef.current?.getBoundingClientRect() || { left: 0, top: 0, width: 0 };
               const ax = anchorRect.left + anchorRect.width / 2;
               const ay = anchorRect.top;
-              
+
               const hx = cardPos.x + 120; // card center
               const hy = cardPos.y + 19;  // hole center
 
               // Compute realistic stretch tension
               const dyBase = Math.max(1, hy - ay);
-              const restingDy = 75; 
+              const restingDy = 75;
               const stretchFactor = Math.max(1, dyBase / restingDy);
-              
+
               // Fabric tightens around the neck, and the cord width stretches thin
-              const neckSpread = Math.max(15, 40 / Math.pow(stretchFactor, 0.4)); 
+              const neckSpread = Math.max(15, 40 / Math.pow(stretchFactor, 0.4));
               const stringWidth = Math.max(3, 10 / Math.pow(stretchFactor, 0.6));
 
               const lax = ax - neckSpread;
@@ -277,9 +277,15 @@ const Hero = ({ scrollTo }) => {
         <div className="fu1" style={{ flex: 1, minWidth: 300, maxWidth: 560 }}>
           <p className="mono" style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(96,165,250,0.6)", marginBottom: 20 }}>Backend Developer · Philippines</p>
 
-          <h1 className="syne hero-title" style={{ fontWeight: 800, marginBottom: 24, minHeight: "2.2em" }}>
-            <span className="gtext">{typedFirst}</span>
-            <span style={{ color: "var(--text-h)" }}> {typedLast}<span style={{ display: "inline-block", width: 3, height: "0.85em", background: "linear-gradient(135deg,#60a5fa,#a78bfa)", borderRadius: 2, marginLeft: 2, verticalAlign: "middle", animation: "blink 0.75s step-end infinite" }} /></span>
+          <h1 className="syne hero-title" style={{ fontWeight: 850, marginBottom: 24, minHeight: "2.2em" }}>
+            <span className="gtext" style={{ display: "block" }}>
+              {typedFirst}
+              {(typingPhase === "first" || typingPhase === "erase-first") && <span style={{ display: "inline-block", width: 3, height: "0.85em", background: "linear-gradient(135deg,#60a5fa,#a78bfa)", borderRadius: 2, marginLeft: 2, verticalAlign: "middle", animation: "blink 0.75s step-end infinite" }} />}
+            </span>
+            <span style={{ color: "var(--text-h)", display: "block", minHeight: "1.2em" }}>
+              {typedLast}
+              {(typingPhase === "pause" || typingPhase === "erase-last") && <span style={{ display: "inline-block", width: 3, height: "0.85em", background: "linear-gradient(135deg,#60a5fa,#a78bfa)", borderRadius: 2, marginLeft: 2, verticalAlign: "middle", animation: "blink 0.75s step-end infinite" }} />}
+            </span>
           </h1>
 
           <p className="fu2" style={{ color: "#64748b", fontSize: 15, lineHeight: 1.85, marginBottom: 36 }}>
