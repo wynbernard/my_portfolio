@@ -12,10 +12,17 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isDark, setIsDark] = useState(true);
 
   const navLinks = ["home", "about", "skills", "projects", "contact"];
 
   useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      setIsDark(false);
+      document.body.classList.add("light-mode");
+    }
+
     const onScroll = () => setScrolled(window.scrollY > 40);
     const onMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
     
@@ -42,6 +49,20 @@ export default function App() {
     };
   }, []);
 
+  const toggleTheme = () => {
+    setIsDark(prev => {
+      const next = !prev;
+      if (next) {
+        document.body.classList.remove("light-mode");
+        localStorage.setItem("theme", "dark");
+      } else {
+        document.body.classList.add("light-mode");
+        localStorage.setItem("theme", "light");
+      }
+      return next;
+    });
+  };
+
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     setActiveSection(id);
@@ -60,7 +81,7 @@ export default function App() {
           bottom: 0,
           pointerEvents: "none",
           zIndex: 9999,
-          background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, rgba(96, 165, 250, 0.15), transparent 40%)`
+          background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, var(--cursor-gradient), transparent 40%)`
         }}
       />
       <Navbar
@@ -70,8 +91,10 @@ export default function App() {
         setMenuOpen={setMenuOpen}
         navLinks={navLinks}
         scrollTo={scrollTo}
+        isDark={isDark}
+        toggleTheme={toggleTheme}
       />
-      <Hero scrollTo={scrollTo} />
+      <Hero scrollTo={scrollTo} isDark={isDark} />
       <About />
       <Skills />
       <Projects />

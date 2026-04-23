@@ -133,6 +133,74 @@ p {
   --container-bg: #08080f;
   --container-text: #cbd5e1;
   --section-bg-subtle: rgba(255, 255, 255, 0.015);
+
+  /* Component-specific variables */
+  --id-card-bg-start: rgba(15, 23, 42, 0.95);
+  --id-card-bg-end: rgba(8, 8, 15, 0.98);
+  --id-card-border: rgba(96, 165, 250, 0.25);
+  --id-card-shadow: rgba(0, 0, 0, 0.5);
+  --id-card-shadow-glow: rgba(96, 165, 250, 0.1);
+  --id-card-shadow-drag: rgba(0, 0, 0, 0.7);
+  --id-card-shadow-drag-glow: rgba(96, 165, 250, 0.2);
+  --lanyard-string: #0f172a;
+  --lanyard-string-border: #3b82f6;
+  --lanyard-string-inner: rgba(255, 255, 255, 0.1);
+  --clip-hole-bg: rgba(96, 165, 250, 0.04);
+  --clip-hole-border: rgba(96, 165, 250, 0.08);
+  --clip-hole-inner: rgba(8, 8, 15, 0.8);
+  --clip-hole-inner-border: #475569;
+  --status-bg: rgba(16, 185, 129, 0.08);
+  --status-border: rgba(16, 185, 129, 0.2);
+  --cursor-gradient: rgba(96, 165, 250, 0.15);
+  --blob-color-1: #1d4ed8;
+  --blob-color-2: #6d28d9;
+}
+
+body.light-mode {
+  --nav-text: #64748b;
+  --nav-active-bg: rgba(59, 130, 246, 0.1);
+  --nav-active-text: #2563eb;
+  --text-muted: #64748b;
+  --text-h: #0f172a;
+  --card-bg: rgba(255, 255, 255, 0.6);
+  --card-border: rgba(0, 0, 0, 0.08);
+  --skill-track-bg: rgba(0, 0, 0, 0.08);
+  --tag-bg: rgba(59, 130, 246, 0.1);
+  --tag-border: rgba(59, 130, 246, 0.2);
+  --tag-text: #2563eb;
+  --tab-btn-text: #475569;
+  --tab-btn-border: rgba(0, 0, 0, 0.1);
+  --field-bg: rgba(0, 0, 0, 0.03);
+  --field-border: rgba(0, 0, 0, 0.1);
+  --field-text: #0f172a;
+  --field-placeholder: #64748b;
+  --section-label-tag: #3b82f6;
+  --nav-bg: rgba(255, 255, 255, 0.85);
+  --nav-border: rgba(0, 0, 0, 0.08);
+  --blob-opacity: 0.15;
+  --container-bg: #f8fafc;
+  --container-text: #334155;
+  --section-bg-subtle: rgba(0, 0, 0, 0.015);
+
+  --id-card-bg-start: rgba(255, 255, 255, 0.95);
+  --id-card-bg-end: rgba(248, 250, 252, 0.98);
+  --id-card-border: rgba(59, 130, 246, 0.3);
+  --id-card-shadow: rgba(0, 0, 0, 0.1);
+  --id-card-shadow-glow: rgba(59, 130, 246, 0.15);
+  --id-card-shadow-drag: rgba(0, 0, 0, 0.15);
+  --id-card-shadow-drag-glow: rgba(59, 130, 246, 0.25);
+  --lanyard-string: #cbd5e1;
+  --lanyard-string-border: #3b82f6;
+  --lanyard-string-inner: rgba(0, 0, 0, 0.05);
+  --clip-hole-bg: rgba(59, 130, 246, 0.08);
+  --clip-hole-border: rgba(59, 130, 246, 0.15);
+  --clip-hole-inner: rgba(255, 255, 255, 0.8);
+  --clip-hole-inner-border: #cbd5e1;
+  --status-bg: rgba(16, 185, 129, 0.12);
+  --status-border: rgba(16, 185, 129, 0.3);
+  --cursor-gradient: rgba(59, 130, 246, 0.1);
+  --blob-color-1: #93c5fd;
+  --blob-color-2: #c4b5fd;
 }
 
 *,

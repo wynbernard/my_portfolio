@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import profileImg from "../assets/profile.jpg";
+import sleepImg from "../assets/sleep.png";
 
-const Hero = ({ scrollTo }) => {
+const Hero = ({ scrollTo, isDark }) => {
   const [typedFirst, setTypedFirst] = useState("");
   const [typedLast, setTypedLast] = useState("");
   const [typingPhase, setTypingPhase] = useState("first");
@@ -125,8 +126,8 @@ const Hero = ({ scrollTo }) => {
     <section id="home" className="grid-bg" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", paddingTop: 80 }}>
       {/* Blob container — clips blobs but lets the card overflow freely */}
       <div style={{ position: "absolute", inset: 0, overflow: "hidden", zIndex: 0, pointerEvents: "none" }}>
-        <div className="blob" style={{ width: 420, height: 420, background: "#1d4ed8", top: "5%", right: "-8%" }} />
-        <div className="blob" style={{ width: 300, height: 300, background: "#6d28d9", bottom: "10%", left: "-5%", animationDelay: "3s" }} />
+        <div className="blob" style={{ width: 420, height: 420, background: "var(--blob-color-1)", top: "5%", right: "-8%" }} />
+        <div className="blob" style={{ width: 300, height: 300, background: "var(--blob-color-2)", bottom: "10%", left: "-5%", animationDelay: "3s" }} />
       </div>
 
       <div className="hero-content" style={{ position: "relative", zIndex: 1, maxWidth: 1100, width: "100%", margin: "0 auto", padding: "60px 24px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "48px", justifyContent: "center" }}>
@@ -145,16 +146,16 @@ const Hero = ({ scrollTo }) => {
                   <div style={{
                     position: "absolute", bottom: 8, left: 35,
                     width: 10, height: 1000,
-                    background: "#0f172a", borderRight: "2px solid #3b82f6",
-                    borderLeft: "1px solid rgba(255,255,255,0.1)",
+                    background: "var(--lanyard-string)", borderRight: "2px solid var(--lanyard-string-border)",
+                    borderLeft: "1px solid var(--lanyard-string-inner)",
                     transformOrigin: "bottom center", transform: "rotate(-2.3deg)"
                   }} />
                   {/* Right String */}
                   <div style={{
                     position: "absolute", bottom: 8, right: 35,
                     width: 10, height: 1000,
-                    background: "#0f172a", borderLeft: "2px solid #3b82f6",
-                    borderRight: "1px solid rgba(255,255,255,0.1)",
+                    background: "var(--lanyard-string)", borderLeft: "2px solid var(--lanyard-string-border)",
+                    borderRight: "1px solid var(--lanyard-string-inner)",
                     transformOrigin: "bottom center", transform: "rotate(2.3deg)"
                   }} />
 
@@ -223,8 +224,8 @@ const Hero = ({ scrollTo }) => {
                   <div style={{
                     position: "fixed", left: lax - (stringWidth / 2), top: lay,
                     width: stringWidth, height: ldist,
-                    background: "#0f172a", borderRight: "2px solid #3b82f6",
-                    borderLeft: "1px solid rgba(255,255,255,0.1)",
+                    background: "var(--lanyard-string)", borderRight: "2px solid var(--lanyard-string-border)",
+                    borderLeft: "1px solid var(--lanyard-string-inner)",
                     transformOrigin: "top center", transform: `rotate(${langle}deg)`,
                     transition: transitionStyle,
                     zIndex: 10000, pointerEvents: "none",
@@ -233,8 +234,8 @@ const Hero = ({ scrollTo }) => {
                   <div style={{
                     position: "fixed", left: rax - (stringWidth / 2), top: ray,
                     width: stringWidth, height: rdist,
-                    background: "#0f172a", borderLeft: "2px solid #3b82f6",
-                    borderRight: "1px solid rgba(255,255,255,0.1)",
+                    background: "var(--lanyard-string)", borderLeft: "2px solid var(--lanyard-string-border)",
+                    borderRight: "1px solid var(--lanyard-string-inner)",
                     transformOrigin: "top center", transform: `rotate(${rangle}deg)`,
                     transition: transitionStyle,
                     zIndex: 10000, pointerEvents: "none",
@@ -294,27 +295,27 @@ const Hero = ({ scrollTo }) => {
                 style={{
                   width: "100%", height: "100%",
                   borderRadius: 16,
-                  border: "1px solid rgba(96,165,250,0.25)",
+                  border: "1px solid var(--id-card-border)",
                   overflow: "hidden",
-                  background: "linear-gradient(160deg, rgba(15,23,42,0.95), rgba(8,8,15,0.98))",
+                  background: "linear-gradient(160deg, var(--id-card-bg-start), var(--id-card-bg-end))",
                   boxShadow: isDragging
-                    ? "0 40px 90px rgba(0,0,0,0.7), 0 0 60px rgba(96,165,250,0.2)"
-                    : "0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(96,165,250,0.1)",
+                    ? "0 40px 90px var(--id-card-shadow-drag), 0 0 60px var(--id-card-shadow-drag-glow)"
+                    : "0 24px 64px var(--id-card-shadow), 0 0 0 1px var(--id-card-shadow-glow)",
                   transition: isDragging ? "box-shadow 0.1s" : "box-shadow 0.4s ease",
                   transformOrigin: "50% 19px",
                   willChange: "transform"
                 }}
               >
               {/* Clip hole at top */}
-              <div style={{ display: "flex", justifyContent: "center", padding: "12px 0 8px", background: "rgba(96,165,250,0.04)", borderBottom: "1px solid rgba(96,165,250,0.08)" }}>
-                <div style={{ width: 14, height: 14, borderRadius: "50%", border: "2px solid #475569", background: "rgba(8,8,15,0.8)" }} />
+              <div style={{ display: "flex", justifyContent: "center", padding: "12px 0 8px", background: "var(--clip-hole-bg)", borderBottom: "1px solid var(--clip-hole-border)" }}>
+                <div style={{ width: 14, height: 14, borderRadius: "50%", border: "2px solid var(--clip-hole-inner-border)", background: "var(--clip-hole-inner)" }} />
               </div>
 
               {/* Photo */}
               <div style={{ padding: "16px 16px 8px", display: "flex", justifyContent: "center" }}>
-                <div style={{ width: 120, height: 140, borderRadius: 10, overflow: "hidden", border: "2px solid rgba(96,165,250,0.2)" }}>
+                <div style={{ width: 120, height: 140, borderRadius: 10, overflow: "hidden", border: "2px solid var(--id-card-shadow-glow)" }}>
                   <img
-                    src={profileImg}
+                    src={isDark ? profileImg : sleepImg}
                     alt="Wynbernard Deysolong"
                     style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center" }}
                   />
@@ -323,10 +324,10 @@ const Hero = ({ scrollTo }) => {
 
               {/* ID Info */}
               <div style={{ padding: "8px 16px 16px", textAlign: "center" }}>
-                <p className="syne" style={{ fontSize: 14, fontWeight: 700, color: "#f1f5f9", marginBottom: 2 }}>Wynbernard D.</p>
-                <p className="mono" style={{ fontSize: 9, letterSpacing: "0.12em", color: "#60a5fa", marginBottom: 10 }}>Backend Developer</p>
-                <div style={{ height: 1, background: "rgba(96,165,250,0.1)", marginBottom: 10 }} />
-                <p className="mono" style={{ fontSize: 8, letterSpacing: "0.1em", color: "#475569" }}>Bago City College · 2022–present</p>
+                <p className="syne" style={{ fontSize: 14, fontWeight: 700, color: "var(--text-h)", marginBottom: 2 }}>Wynbernard D.</p>
+                <p className="mono" style={{ fontSize: 9, letterSpacing: "0.12em", color: "var(--accent)", marginBottom: 10 }}>Backend Developer</p>
+                <div style={{ height: 1, background: "var(--id-card-shadow-glow)", marginBottom: 10 }} />
+                <p className="mono" style={{ fontSize: 8, letterSpacing: "0.1em", color: "var(--text)" }}>Bago City College · 2022–present</p>
               </div>
 
               {/* Bottom stripe */}
@@ -336,9 +337,9 @@ const Hero = ({ scrollTo }) => {
           </div>
 
           {/* status badge */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8, background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: 99, padding: "6px 16px", transition: "all 0.4s" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--status-bg)", border: "1px solid var(--status-border)", borderRadius: 99, padding: "6px 16px", transition: "all 0.4s" }}>
             <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#10b981", display: "inline-block", boxShadow: "0 0 6px #10b981", transition: "all 0.4s" }} />
-            <span className="mono" style={{ fontSize: 10, letterSpacing: "0.12em", color: "#6ee7b7", transition: "color 0.4s" }}>Available for work</span>
+            <span className="mono" style={{ fontSize: 10, letterSpacing: "0.12em", color: "#10b981", filter: "brightness(1.2)", transition: "color 0.4s" }}>Available for work</span>
           </div>
         </div>
 
