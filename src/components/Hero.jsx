@@ -318,7 +318,7 @@ const Hero = ({ scrollTo, isDark }) => {
                 <div style={{ padding: "16px 16px 8px", display: "flex", justifyContent: "center" }}>
                   <div style={{ width: 120, height: 140, borderRadius: 10, overflow: "hidden", border: "2px solid var(--id-card-shadow-glow)" }}>
                     <img
-                      src={isDark !== isHovered ? sleepImg : profileImg}
+                      src={isDark !== isHovered ? profileImg : sleepImg}
                       alt="Wynbernard Deysolong"
                       style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center" }}
                     />
