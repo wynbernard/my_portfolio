@@ -9,6 +9,7 @@ const Hero = ({ scrollTo, isDark }) => {
 
   const [isDragging, setIsDragging] = useState(false);
   const [isFixed, setIsFixed] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const [cardPos, setCardPos] = useState({ x: 0, y: 0 });
   const [originPos, setOriginPos] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -277,6 +278,8 @@ const Hero = ({ scrollTo, isDark }) => {
                 setIsFixed(true);
                 setIsDragging(true);
               }}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
               style={{
                 width: 240,
                 position: isFixed ? "fixed" : "relative",
@@ -306,32 +309,32 @@ const Hero = ({ scrollTo, isDark }) => {
                   willChange: "transform"
                 }}
               >
-              {/* Clip hole at top */}
-              <div style={{ display: "flex", justifyContent: "center", padding: "12px 0 8px", background: "var(--clip-hole-bg)", borderBottom: "1px solid var(--clip-hole-border)" }}>
-                <div style={{ width: 14, height: 14, borderRadius: "50%", border: "2px solid var(--clip-hole-inner-border)", background: "var(--clip-hole-inner)" }} />
-              </div>
-
-              {/* Photo */}
-              <div style={{ padding: "16px 16px 8px", display: "flex", justifyContent: "center" }}>
-                <div style={{ width: 120, height: 140, borderRadius: 10, overflow: "hidden", border: "2px solid var(--id-card-shadow-glow)" }}>
-                  <img
-                    src={isDark ? profileImg : sleepImg}
-                    alt="Wynbernard Deysolong"
-                    style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center" }}
-                  />
+                {/* Clip hole at top */}
+                <div style={{ display: "flex", justifyContent: "center", padding: "12px 0 8px", background: "var(--clip-hole-bg)", borderBottom: "1px solid var(--clip-hole-border)" }}>
+                  <div style={{ width: 14, height: 14, borderRadius: "50%", border: "2px solid var(--clip-hole-inner-border)", background: "var(--clip-hole-inner)" }} />
                 </div>
-              </div>
 
-              {/* ID Info */}
-              <div style={{ padding: "8px 16px 16px", textAlign: "center" }}>
-                <p className="syne" style={{ fontSize: 14, fontWeight: 700, color: "var(--text-h)", marginBottom: 2 }}>Wynbernard D.</p>
-                <p className="mono" style={{ fontSize: 9, letterSpacing: "0.12em", color: "var(--accent)", marginBottom: 10 }}>Backend Developer</p>
-                <div style={{ height: 1, background: "var(--id-card-shadow-glow)", marginBottom: 10 }} />
-                <p className="mono" style={{ fontSize: 8, letterSpacing: "0.1em", color: "var(--text)" }}>Bago City College · 2022–present</p>
-              </div>
+                {/* Photo */}
+                <div style={{ padding: "16px 16px 8px", display: "flex", justifyContent: "center" }}>
+                  <div style={{ width: 120, height: 140, borderRadius: 10, overflow: "hidden", border: "2px solid var(--id-card-shadow-glow)" }}>
+                    <img
+                      src={isDark !== isHovered ? sleepImg : profileImg}
+                      alt="Wynbernard Deysolong"
+                      style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center" }}
+                    />
+                  </div>
+                </div>
 
-              {/* Bottom stripe */}
-              <div style={{ height: 6, background: "linear-gradient(90deg, #3b82f6, #7c3aed, #f472b6)" }} />
+                {/* ID Info */}
+                <div style={{ padding: "8px 16px 16px", textAlign: "center" }}>
+                  <p className="syne" style={{ fontSize: 14, fontWeight: 700, color: "var(--text-h)", marginBottom: 2 }}>Wynbernard D.</p>
+                  <p className="mono" style={{ fontSize: 9, letterSpacing: "0.12em", color: "var(--accent)", marginBottom: 10 }}>Backend Developer</p>
+                  <div style={{ height: 1, background: "var(--id-card-shadow-glow)", marginBottom: 10 }} />
+                  <p className="mono" style={{ fontSize: 8, letterSpacing: "0.1em", color: "var(--text)" }}>Bago City College · 2022–present</p>
+                </div>
+
+                {/* Bottom stripe */}
+                <div style={{ height: 6, background: "linear-gradient(90deg, #3b82f6, #7c3aed, #f472b6)" }} />
               </div>
             </div>
           </div>
