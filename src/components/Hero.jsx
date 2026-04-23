@@ -11,9 +11,65 @@ const Hero = ({ scrollTo }) => {
   const [cardPos, setCardPos] = useState({ x: 0, y: 0 });
   const [originPos, setOriginPos] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [cardHeight, setCardHeight] = useState(290);
 
   const cardRef = useRef(null);
   const anchorRef = useRef(null);
+  const innerCardRef = useRef(null);
+  const cardVelocity = useRef({ x: 0, y: 0 });
+  const lastCardPos = useRef({ x: 0, y: 0 });
+  const currentRotation = useRef({ x: 0, y: 0, z: 0 });
+  const rotationVelocity = useRef({ x: 0, y: 0, z: 0 });
+
+  useEffect(() => {
+    let frameId;
+    const updatePhysics = () => {
+      if (cardRef.current && innerCardRef.current) {
+        const rect = cardRef.current.getBoundingClientRect();
+        const currentX = rect.left;
+        const currentY = rect.top;
+
+        if (lastCardPos.current.x !== 0 || lastCardPos.current.y !== 0) {
+          const vx = currentX - lastCardPos.current.x;
+          const vy = currentY - lastCardPos.current.y;
+
+          cardVelocity.current.x = cardVelocity.current.x * 0.8 + vx * 0.2;
+          cardVelocity.current.y = cardVelocity.current.y * 0.8 + vy * 0.2;
+        }
+
+        lastCardPos.current.x = currentX;
+        lastCardPos.current.y = currentY;
+
+        let tx = cardVelocity.current.y * 1.5;
+        let ty = cardVelocity.current.x * 1.5;
+        let tz = -cardVelocity.current.x * 1.2;
+
+        tx = Math.max(-45, Math.min(45, tx));
+        ty = Math.max(-45, Math.min(45, ty));
+        tz = Math.max(-35, Math.min(35, tz));
+
+        const tension = 0.08;
+        const friction = 0.82;
+
+        rotationVelocity.current.x += (tx - currentRotation.current.x) * tension;
+        rotationVelocity.current.y += (ty - currentRotation.current.y) * tension;
+        rotationVelocity.current.z += (tz - currentRotation.current.z) * tension;
+
+        rotationVelocity.current.x *= friction;
+        rotationVelocity.current.y *= friction;
+        rotationVelocity.current.z *= friction;
+
+        currentRotation.current.x += rotationVelocity.current.x;
+        currentRotation.current.y += rotationVelocity.current.y;
+        currentRotation.current.z += rotationVelocity.current.z;
+
+        innerCardRef.current.style.transform = `perspective(1000px) rotateX(${currentRotation.current.x}deg) rotateY(${currentRotation.current.y}deg) rotateZ(${currentRotation.current.z}deg)`;
+      }
+      frameId = requestAnimationFrame(updatePhysics);
+    };
+    frameId = requestAnimationFrame(updatePhysics);
+    return () => cancelAnimationFrame(frameId);
+  }, []);
 
   useEffect(() => {
     if (!isDragging) return;
@@ -79,46 +135,48 @@ const Hero = ({ scrollTo }) => {
           {/* Lanyard + Card wrapper */}
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", userSelect: "none", position: "relative" }}>
             {/* Anchor Point — where the cord is tied */}
-            <div ref={anchorRef} style={{ position: "absolute", top: 0, left: "50%", width: 1, height: 1 }} />
+            <div ref={anchorRef} style={{ position: "absolute", top: -1000, left: "50%", width: 1, height: 1 }} />
 
-            {/* Cord */}
-            {!isFixed ? (
-              <div style={{ position: "relative", width: 80, height: 60, zIndex: 2, flexShrink: 0 }}>
-                {/* Left String */}
-                <div style={{
-                  position: "absolute", top: 0, left: 0,
-                  width: 10, height: 65,
-                  background: "#0f172a", borderRight: "2px solid #3b82f6",
-                  borderLeft: "1px solid rgba(255,255,255,0.1)",
-                  transformOrigin: "top center", transform: "rotate(-34deg)",
-                  borderRadius: "8px 8px 0 0"
-                }} />
-                {/* Right String */}
-                <div style={{
-                  position: "absolute", top: 0, right: 0,
-                  width: 10, height: 65,
-                  background: "#0f172a", borderLeft: "2px solid #3b82f6",
-                  borderRight: "1px solid rgba(255,255,255,0.1)",
-                  transformOrigin: "top center", transform: "rotate(34deg)",
-                  borderRadius: "8px 8px 0 0"
-                }} />
+            {/* Cord Layout Placeholder / Static Cord */}
+            <div style={{ position: "relative", width: 80, height: 60, zIndex: 2, flexShrink: 0 }}>
+              {!isFixed && (
+                <>
+                  {/* Left String */}
+                  <div style={{
+                    position: "absolute", bottom: 8, left: 35,
+                    width: 10, height: 1000,
+                    background: "#0f172a", borderRight: "2px solid #3b82f6",
+                    borderLeft: "1px solid rgba(255,255,255,0.1)",
+                    transformOrigin: "bottom center", transform: "rotate(-2.3deg)"
+                  }} />
+                  {/* Right String */}
+                  <div style={{
+                    position: "absolute", bottom: 8, right: 35,
+                    width: 10, height: 1000,
+                    background: "#0f172a", borderLeft: "2px solid #3b82f6",
+                    borderRight: "1px solid rgba(255,255,255,0.1)",
+                    transformOrigin: "bottom center", transform: "rotate(2.3deg)"
+                  }} />
 
-                {/* Hardware clip */}
-                <div style={{
-                  position: "absolute", top: 52, left: 33,
-                  width: 14, height: 28,
-                  background: "linear-gradient(to bottom, #94a3b8, #475569)",
-                  borderRadius: "3px 3px 8px 8px",
-                  border: "1px solid #1e293b",
-                  display: "flex", justifyContent: "center",
-                  boxShadow: "0 4px 8px rgba(0,0,0,0.4)",
-                  zIndex: 3
-                }}>
-                  {/* Metal Hook */}
-                  <div style={{ width: 6, height: 12, border: "2px solid #f1f5f9", borderRadius: 10, position: "absolute", bottom: -6 }} />
-                </div>
-              </div>
-            ) : (() => {
+                  {/* Hardware clip */}
+                  <div style={{
+                    position: "absolute", top: 52, left: 33,
+                    width: 14, height: 28,
+                    background: "linear-gradient(to bottom, #94a3b8, #475569)",
+                    borderRadius: "3px 3px 8px 8px",
+                    border: "1px solid #1e293b",
+                    display: "flex", justifyContent: "center",
+                    boxShadow: "0 4px 8px rgba(0,0,0,0.4)",
+                    zIndex: 3
+                  }}>
+                    {/* Metal Hook */}
+                    <div style={{ width: 6, height: 12, border: "2px solid #f1f5f9", borderRadius: 10, position: "absolute", bottom: -6 }} />
+                  </div>
+                </>
+              )}
+            </div>
+
+            {isFixed && (() => {
               // Dynamic Cord Calculation
               const anchorRect = anchorRef.current?.getBoundingClientRect() || { left: 0, top: 0, width: 0 };
               const ax = anchorRect.left + anchorRect.width / 2;
@@ -129,7 +187,7 @@ const Hero = ({ scrollTo }) => {
 
               // Compute realistic stretch tension
               const dyBase = Math.max(1, hy - ay);
-              const restingDy = 75;
+              const restingDy = 1050;
               const stretchFactor = Math.max(1, dyBase / restingDy);
 
               // Fabric tightens around the neck, and the cord width stretches thin
@@ -202,7 +260,7 @@ const Hero = ({ scrollTo }) => {
             })()}
 
             {/* Placeholder keeps layout space when card is fixed */}
-            {isFixed && <div style={{ width: 240, height: 290, flexShrink: 0 }} />}
+            {isFixed && <div style={{ width: 240, height: cardHeight, flexShrink: 0 }} />}
 
             {/* ID Card */}
             <div
@@ -211,6 +269,7 @@ const Hero = ({ scrollTo }) => {
               onMouseDown={e => {
                 e.preventDefault();
                 const rect = cardRef.current.getBoundingClientRect();
+                setCardHeight(rect.height);
                 setOriginPos({ x: rect.left, y: rect.top });
                 setCardPos({ x: rect.left, y: rect.top });
                 setDragOffset({ x: e.clientX - rect.left, y: e.clientY - rect.top });
@@ -219,24 +278,33 @@ const Hero = ({ scrollTo }) => {
               }}
               style={{
                 width: 240,
-                borderRadius: 16,
-                border: "1px solid rgba(96,165,250,0.25)",
-                overflow: "hidden",
                 position: isFixed ? "fixed" : "relative",
                 left: isFixed ? cardPos.x : "auto",
                 top: isFixed ? cardPos.y : "auto",
-                background: "linear-gradient(160deg, rgba(15,23,42,0.95), rgba(8,8,15,0.98))",
-                boxShadow: isDragging
-                  ? "0 40px 90px rgba(0,0,0,0.7), 0 0 60px rgba(96,165,250,0.2)"
-                  : "0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(96,165,250,0.1)",
                 cursor: isDragging ? "grabbing" : "grab",
                 transition: isDragging
-                  ? "box-shadow 0.1s"
-                  : "left 0.65s cubic-bezier(0.34,1.56,0.64,1), top 0.65s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s ease",
+                  ? "none"
+                  : "left 0.65s cubic-bezier(0.34,1.56,0.64,1), top 0.65s cubic-bezier(0.34,1.56,0.64,1)",
                 willChange: "left, top",
                 zIndex: isFixed ? 9999 : 1,
               }}
             >
+              <div
+                ref={innerCardRef}
+                style={{
+                  width: "100%", height: "100%",
+                  borderRadius: 16,
+                  border: "1px solid rgba(96,165,250,0.25)",
+                  overflow: "hidden",
+                  background: "linear-gradient(160deg, rgba(15,23,42,0.95), rgba(8,8,15,0.98))",
+                  boxShadow: isDragging
+                    ? "0 40px 90px rgba(0,0,0,0.7), 0 0 60px rgba(96,165,250,0.2)"
+                    : "0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(96,165,250,0.1)",
+                  transition: isDragging ? "box-shadow 0.1s" : "box-shadow 0.4s ease",
+                  transformOrigin: "50% 19px",
+                  willChange: "transform"
+                }}
+              >
               {/* Clip hole at top */}
               <div style={{ display: "flex", justifyContent: "center", padding: "12px 0 8px", background: "rgba(96,165,250,0.04)", borderBottom: "1px solid rgba(96,165,250,0.08)" }}>
                 <div style={{ width: 14, height: 14, borderRadius: "50%", border: "2px solid #475569", background: "rgba(8,8,15,0.8)" }} />
@@ -263,6 +331,7 @@ const Hero = ({ scrollTo }) => {
 
               {/* Bottom stripe */}
               <div style={{ height: 6, background: "linear-gradient(90deg, #3b82f6, #7c3aed, #f472b6)" }} />
+              </div>
             </div>
           </div>
 
